@@ -14,11 +14,11 @@ $(TESTS): test-%: % libback.so
 libback.so: back.c
 	$(CC) -std=c99 $(CFLAGS) $(LDFLAGS) -fPIC -shared $< -o $@ -lsupc++
 
-abrt segv : LDFLAGS+= -g -rdynamic
-abrt segv : CXXFLAGS+= -rdynamic
+$(PROGS) : LDFLAGS+= -g -rdynamic
+$(PROGS) : CXXFLAGS+= -rdynamic
 
 .PHONY: clean
 clean:
-	rm -rf segv abrt libback.so
+	rm -rf $(PROGS) libback.so
 
 #
