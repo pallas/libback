@@ -24,7 +24,8 @@ install(TARGETS back
 	)
 
 enable_testing()
-add_test(NAME abrt COMMAND sh -c "$<TARGET_FILE:abrt> 2>&1 | tee abrt.out | grep SIGNAL")
-add_test(NAME segv COMMAND sh -c "$<TARGET_FILE:segv> 2>&1 | tee segv.out | grep SIGNAL")
+add_test(NAME abrt COMMAND sh -c "$<TARGET_FILE:abrt>")
+add_test(NAME segv COMMAND sh -c "$<TARGET_FILE:segv>")
 
 set_property(TEST abrt segv PROPERTY ENVIRONMENT LD_PRELOAD=$<TARGET_FILE:back>)
+set_tests_properties(abrt segv PROPERTIES PASS_REGULAR_EXPRESSION "SIGNAL")
