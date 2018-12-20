@@ -16,16 +16,26 @@ if(SUPCPP_LIBRARY)
 	target_link_libraries(back PUBLIC SUPCPP_LIBRARY)
 endif()
 
-add_executable(abrt abrt.cc)
-add_executable(segv segv.cc)
-
 install(TARGETS back
 	LIBRARY DESTINATION lib
 	)
 
-enable_testing()
-add_test(NAME abrt COMMAND sh -c "$<TARGET_FILE:abrt>")
-add_test(NAME segv COMMAND sh -c "$<TARGET_FILE:segv>")
+set(${PROJECT_NAME}_TESTS
+	abrt
+	segv
+	)
 
+enable_testing()
+add_custom_target(all_tests)
+foreach(test ${${PROJECT_NAME}_TESTS})
+	add_executable(${test} EXCLUDE_FROM_ALL ${test}.cc)
+	add_test(NAME ${test} COMMAND sh -c "$<TARGET_FILE:${test}>")
+	add_dependencies(all_tests ${test})
+endforeach(test)
+build_command(CTEST_CUSTOM_PRE_TEST TARGET all_tests)
+string(CONFIGURE \"@CTEST_CUSTOM_PRE_TEST@\" CTEST_CUSTOM_PRE_TEST_QUOTED ESCAPE_QUOTES)
+file(WRITE "${CMAKE_BINARY_DIR}/CTestCustom.cmake" "set(CTEST_CUSTOM_PRE_TEST ${CTEST_CUSTOM_PRE_TEST_QUOTED})" "\n")
+
+add_dependencies(all_tests back)
 set_property(TEST abrt segv PROPERTY ENVIRONMENT LD_PRELOAD=$<TARGET_FILE:back>)
 set_tests_properties(abrt segv PROPERTIES PASS_REGULAR_EXPRESSION "SIGNAL")
