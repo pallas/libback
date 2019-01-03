@@ -11,10 +11,6 @@ endif()
 project(libback)
 add_library(back SHARED back)
 target_link_libraries(back ${CMAKE_DL_LIBS} supc++)
-find_library(SUPCPP_LIBRARY supc++)
-if(SUPCPP_LIBRARY)
-	target_link_libraries(back PUBLIC SUPCPP_LIBRARY)
-endif()
 
 install(TARGETS back
 	LIBRARY DESTINATION lib
